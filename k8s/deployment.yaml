@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cicd-deployment
+  namespace: cicd-namespace
+spec:
+  selector:
+    matchLabels:
+      app: cicd-website
+
+  replicas: 2
+
+  template:
+    metadata:
+      labels:
+        app: cicd-website
+    spec:
+      volumes:
+        - name: cicd-configmap
+          configMap:
+            name: cicd-configmap
+      containers:
+      - name: cicd-site
+        image: nginx:1.31.6-alpine
+        volumeMounts:
+          - name:  cicd-configmap
+            mountPath: /usr/share/nginx/html
+        ports: 
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: "0.5"
+            memory: "256Mi"
+          limits:
+            cpu: "1"
+            memory: "512Mi"
