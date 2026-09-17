@@ -8,7 +8,7 @@ spec:
     matchLabels:
       app: cicd-website
 
-  replicas: 2
+  replicas: 3
 
   template:
     metadata:
