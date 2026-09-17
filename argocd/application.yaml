@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: cicd-argocd
+  namespace: argocd
+  labels:
+    app: cicd-website
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/KarenNgugi/CNE01-Independent_Project_5
+    targetRevision: main
+    path: k8s/
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: cicd-namespace
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: false
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true
