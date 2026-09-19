@@ -1,9 +1,9 @@
 # CNE01 Independent Project 5 - CI/CD
 
 ## Project Overview
-This project seeks to demonstrate Continuous Integration (CI) and Continuous Delivery (CD) using both Jenkins and ArgoCD respectively.
+This project seeks to demonstrate Continuous Integration (CI) and Continuous Delivery (CD) by creating a small website application, building a CI pipeline in Jenkins, and deploying through ArgoCD using manifests tracked in Git.
 
-The following will be demonstrated upon completion of the project:
+Upon completion of the project, the following will be demonstrated:
 - designing a basic CI/CD architecture using Jenkins and ArgoCD
 - keeping both CI and CD configuration in Git
 - writing a functional Jenkinsfile with the required stages
@@ -11,22 +11,58 @@ The following will be demonstrated upon completion of the project:
 - documenting the setup and evidence clearly
 - using clear, meaningful commits to show progress
 
-## Architecture
+## Repository Structure
+
+## Architecture Overview
+The following image highlights the project's architecture:
+
 ![](https://github.com/KarenNgugi/CNE01-Independent_Project_5/blob/main/docs/screenshots/CICD%20architecture.jpg)
 
-You can find more information on the architecture in [docs/architecture.md](https://github.com/KarenNgugi/CNE01-Independent_Project_5/blob/main/docs/architecture.md).
+**GitHub** acts as the source of truth and contains the application source code, Jenkins pipeline, Kubernetes manifests, and ArgoCD Application manifest.
 
-## Project Setup
+**Jenkins** performs CI by checking out the repository, installing dependencies, running tests, and archiving the website files as build artifacts.
+
+**ArgoCD** performs CD using GitOps. It monitors the Kubernetes manifests stored in GitHub and synchronizes the desired state to the Kubernetes cluster.
+
+
+For more information on the architecture, check out [docs/architecture.md](https://github.com/KarenNgugi/CNE01-Independent_Project_5/blob/main/docs/architecture.md).
+
+## Prerequisites 
 Before you proceed, make sure you have the following:
 - Git
+- NodeJS and npm
 - Docker
-- Kubectl
+- kubectl
 - A Kubernetes cluster (e.g. Minikube)
 
-### Jenkins
+## Local Setup
+### Cloning the project
+I suggest creating a new project folder and cloning the project into it:
+```
+mkdir cicd-project
+cd cicd-project
+git clone https://github.com/KarenNgugi/CNE01-Independent_Project_5.git .
+```
+
+To view the website as it is, simply open `index.html`.
+
+### Running tests locally
+Run the following command to install the NodeJS package.json:
+```
+npm install
+```
+
+Run the following to confirm that the project tests are passing:
+```
+npm test
+```
+
+If successful, your console should output **"All tests passed."**
+
+## Jenkins Setup
 Due to issues I encountered with the official Jenkins Docker image, I created a custom Jenkins image with the required `libatomic1` OS package installed for the Node.js runtime.
 
-First create a jenkins.Dockerfile:
+First create a `jenkins.Dockerfile`:
 ```
 FROM jenkins/jenkins:lts
 
@@ -69,38 +105,7 @@ Once NodeJS is installed, go to Manage Jenkins >> Tools. Scroll down until you f
 
 Once you are done with this, go back to the main/dashboard page and click "New Item" on the left pane. Select the "Pipeline" option and give it any name you desire (e.g. "Karen's Demo CI/CD Pipeline"). Then scroll down to Pipeline section. Under Definition, select the "Pipeline Script from SCM" option. Then under Git, provide the link to the GitHub project (`https://github.com/KarenNgugi/CNE01-Independent_Project_5`). Ensure the branch specifier is set to `*/main` and the ScriptPath has selected the `Jenkinsfile` option, then click Save. In the next page, select "Build Now" on the left pane. Select the recently created build number in the Builds box, and go to Pipeline Overview to view the progress of the build.
 
-### Kubernetes
-Clone this project into a directory of your choice:
-```
-git clone https://github.com/KarenNgugi/CNE01-Independent_Project_5.git
-```
-
-Navigate into the `k8s` directory:
-```
-cd CNE01-Independent_Project_5/k8s
-```
-
-Create the namespace:
-```
-kubectl apply -f namespace.yaml
-```
-
-Set the new namespace as the default one:
-```
-kubectl config set-context --current --namespace=cicd-namespace
-```
-
-The namespace is created manually because the ArgoCD Application itself is deployed into the `argocd` namespace, while the application resources are deployed into `cicd-namespace`.
-
-Apply the remaining manifests to create the resources:
-```
-kubectl apply -f configmap-site.yaml
-kubectl apply -f service.yaml
-kubectl apply -f deployment.yaml
-```
-
-To view the website being served by the deployment, you first obtain the IP address of your cluster. In my case, I'm using Minikube so I run `minikube service cicd-service -n cicd-namespace` to get the IP address then I access the site on `http://<minikube_ip_address>:30080`.
-### ArgoCD
+## ArgoCD Setup
 In a new terminal create a new namespace called `argocd` then run the following command to install ArgoCD resources:
 ```
 kubectl apply -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml -n argocd
@@ -132,7 +137,37 @@ kubectl apply -f application.yaml
   
 Then go to `http://localhost:8082` on your browser, input the admin password, then update it in the User Info menu so that it is easier for you to log in next time. Then go  to the Application page to see an overview of your ArgoCD applications. You can click on it to obtain further details.
 
+
+### Kubernetes
+Navigate into the `k8s` directory:
+```
+cd CNE01-Independent_Project_5/k8s
+```
+
+Create the namespace:
+```
+kubectl apply -f namespace.yaml
+```
+
+Set the new namespace as the default one:
+```
+kubectl config set-context --current --namespace=cicd-namespace
+```
+
+The namespace is created manually because the ArgoCD Application itself is deployed into the `argocd` namespace, while the application resources are deployed into `cicd-namespace`.
+
+Apply the remaining manifests to create the resources:
+```
+kubectl apply -f configmap-site.yaml
+kubectl apply -f service.yaml
+kubectl apply -f deployment.yaml
+```
+
+To view the website being served by the deployment, you first obtain the IP address of your cluster. In my case, I'm using Minikube so I run `minikube service cicd-service -n cicd-namespace` to get the IP address then I access the site on `http://<minikube_ip_address>:30080`.
+
 ## Troubleshooting
 If experiencing issues, you can check [here]() for the troubleshooting guide.
+
+## Lessons Learned
 ## Authors
 [KarenNgugi](https://github.com/KarenNgugi)
