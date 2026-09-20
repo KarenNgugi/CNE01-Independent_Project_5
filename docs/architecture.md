@@ -5,6 +5,42 @@
 ![Image of Kubernetes workload involving a namespace, configmap, service, and deployment](https://github.com/KarenNgugi/CNE01-Independent_Project_5/blob/main/docs/K8s%20architecture.jpg)
 
 # CI/CD Workflow
+```
+                         Developer
+                             |
+                          git push
+                             |
+                             v
+                      +--------------+
+                      |    GitHub    |
+                      |              |
+                      | Source Code  |
+                      | Jenkinsfile  |
+                      | K8s Manifests|
+                      | ArgoCD App   |
+                      +------+-------+
+                             |
+                  +----------+----------+
+                  |                     |
+                pull                  pull
+                  |                     |
+                  v                     v
+           +-------------+      +-------------+
+           |   Jenkins   |      |   ArgoCD    |
+           |     CI      |      |     CD      |
+           +------+------+      +------+------+
+                  |                    |
+             test/archive             sync
+                                       |
+                                       v
+                               +---------------+
+                               |  Kubernetes   |
+                               |               |
+                               | Deployment    |
+                               | Service       |
+                               | ConfigMap     |
+                               +---------------+
+```
 
 # Software versions
 The following were the software versions of the software used at the time of this project:
