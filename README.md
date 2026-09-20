@@ -16,7 +16,7 @@ Upon completion of the project, the following will be demonstrated:
 ## Architecture Overview
 The following image highlights the project's architecture:
 
-![](https://github.com/KarenNgugi/CNE01-Independent_Project_5/blob/main/docs/screenshots/CICD%20architecture.jpg)
+![](https://github.com/KarenNgugi/CNE01-Independent_Project_5/blob/main/docs/CICD%20architecture.jpg)
 
 **GitHub** acts as the source of truth and contains the application source code, Jenkins pipeline, Kubernetes manifests, and ArgoCD Application manifest.
 
