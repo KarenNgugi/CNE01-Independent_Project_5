@@ -1,7 +1,8 @@
 # Architecture
 ## Project Architecture
-
+![Image of project architecture including GitHub, Jenkins, and Argocd](https://github.com/KarenNgugi/CNE01-Independent_Project_5/blob/main/docs/CICD%20architecture.jpg)
 ## Kubernetes Architecture
+![Image of Kubernetes workload involving a namespace, configmap, service, and deployment](https://github.com/KarenNgugi/CNE01-Independent_Project_5/blob/main/docs/K8s%20architecture.jpg)
 
 # CI/CD Workflow
 
